@@ -166,7 +166,7 @@ def plotNSigmaNormals( mu=0, sigma=1, shift=1.5, SL=6, save=False ):
     # create the borded box:
     #...................................................................
     l0 = stats.norm( loc=shift*sigma+0.5, scale=sigma ).ppf( 0.85 )
-    l1 = l0 + 2.3
+    l1 = l0 + 2.6
 
     h0 = 0.15
     h1 = h0 + 0.1
@@ -187,7 +187,7 @@ def plotNSigmaNormals( mu=0, sigma=1, shift=1.5, SL=6, save=False ):
                                          ha='left', color=limits_col, alpha=0.9 )
 
     formannotate( '${:s}$ shift: {:.3e}', switch[-1][2], cdf1+cdf4, 
-                  x=dx, y=dy, xytxt=( dx, dy-0.03 ), colr=switch[1][0], a=0.7 )
+                  x=dx, y=dy, xytxt=( dx, dy-0.03 ), colr=switch[-1][0], a=0.7 )
 
     formannotate( '  {:s}: {:.3e}', switch[0][2], cdf2+cdf5, 
                   x=dx, y=dy, xytxt=( dx, dy-0.05 ), colr=switch[0][0], a=0.7 )
@@ -252,7 +252,7 @@ def plotNSigmaNormals( mu=0, sigma=1, shift=1.5, SL=6, save=False ):
     plt.show()
     
     if save:
-         fig.savefig( filename='img/My Normal Distribution Fig.svg', dpi=512, 
+         fig.savefig( filename='img/My {:d}_sigma Normal Dist Fig.svg'.format(SL), dpi=512, 
                       orientation='landscape', transparent=True, frameon=None, bbox_inches='tight')
 
 if __name__ == '__main__':
@@ -265,7 +265,7 @@ if __name__ == '__main__':
     from matplotlib.patches import FancyBboxPatch
 
     # assign arguments:   
-    mu = 0.; sigma = 1; shift = 1.5;  SL = 5    # 0, 1, 1.5, 6 == default vals
+    mu = 0.; sigma = 1; shift = 1.5;  SL = 6    # 0, 1, 1.5, 6 == default vals
     save = True
     
     # Call plotting function: 
