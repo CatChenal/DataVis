@@ -10,7 +10,7 @@
    catchenal@gmail.com
 """
 
-def plotNSigmaNormals( mu=0, sigma=1, shift=1.5, SL=6, save=False ):
+def plotNSigmaNormals( mu=0, sigma=1, shift=1.5, SL=6, save=False, fs=(11.5, 4.5), resi=512, file_out='NsigmaNormal.png' ):
     """
     # mu = 0; sigma = 1 : mean and standard deviation 
     # shift = 1.5 : for the plotting of the shifted distributions
@@ -23,8 +23,8 @@ def plotNSigmaNormals( mu=0, sigma=1, shift=1.5, SL=6, save=False ):
     # Compute the past-extreme location for arrow placement:
     lsl, usl = mu - SL*sigma, mu + SL*sigma      # :: the '6-sigma' extremes
     
-    beg = lsl - 1 # :: for x-axis range resizing 
-    end = usl + 1
+    beg = lsl - 0.75 # :: for x-axis range resizing 
+    end = usl + 0.75
     
     # the last index of the dict value is used for extreme (SL=special limit) points labeling
     shift1 = '+{:.1f}\sigma'.format(shift)
@@ -38,7 +38,7 @@ def plotNSigmaNormals( mu=0, sigma=1, shift=1.5, SL=6, save=False ):
     fill_transpcy = 0.15
     line_transpcy = 0.40
     
-    fig = plt.figure(1, figsize=(11.5, 4.5))
+    fig = plt.figure(1, figsize=fs)
     
     plt.title( 'Normal distribution pdf (' + 
                 '$\mu$={:.2f}, $\sigma$={:.2f}, shift={:.1f}, |SL|={:.0f})\n'.format( mu, sigma, shift, SL ))
@@ -167,15 +167,21 @@ def plotNSigmaNormals( mu=0, sigma=1, shift=1.5, SL=6, save=False ):
     #...................................................................
     l0 = stats.norm( loc=shift*sigma+0.5, scale=sigma ).ppf( 0.85 )
     l1 = l0 + 2.6
-
     h0 = 0.15
     h1 = h0 + 0.1
     
+    # If fig_size width too small (w<11), the text will not fit in box
+    # => draw box w/o edge color
+    if fs[0] < 11:
+        edge_col='none'
+    else:
+        edge_col=limits_col
+        
     bb = Bbox( [ [l0,h0], [l1,h1] ] )
     fbx = FancyBboxPatch( (bb.xmin, bb.ymin), abs(bb.width), abs(bb.height),
                           boxstyle='round, pad=0.01, rounding_size=0.05', 
                           linewidth=1, alpha=line_transpcy, zorder=1, 
-                          ec=limits_col, fc='none')
+                          ec=edge_col, fc='none')
     axes.add_patch(fbx)
     
     # Create text (to overlap the box):
@@ -196,11 +202,13 @@ def plotNSigmaNormals( mu=0, sigma=1, shift=1.5, SL=6, save=False ):
                   x=dx, y=dy, xytxt=( dx, dy-0.07 ), colr=switch[1][0], a=0.7 )
     
     
+    # place y-axis at x=mu
     axes.spines['left'].set_position( ('data', mu) )
-    axes.spines['left'].set_color( (0.5, 0.5, 0.5) )
+    # change transp. of both axes
+    axes.spines['left'].set( alpha=0.3 )
+    axes.spines['bottom'].set( alpha=0.3 )
     
     axes.set_xlim( beg, end)
-    
     Ylim = max(y)
     axes.set_ylim( 0, Ylim + 0.05)
     
@@ -252,8 +260,8 @@ def plotNSigmaNormals( mu=0, sigma=1, shift=1.5, SL=6, save=False ):
     plt.show()
     
     if save:
-         fig.savefig( filename='img/My {:d}_sigma Normal Dist Fig.svg'.format(SL), dpi=512, 
-                      orientation='landscape', transparent=True, frameon=None, bbox_inches='tight')
+         fig.savefig( filename=file_out, dpi=resi, orientation='landscape', 
+                      transparent=True, frameon=None, bbox_inches='tight')
 
 if __name__ == '__main__':
     # import libs:
@@ -267,6 +275,9 @@ if __name__ == '__main__':
     # assign arguments:   
     mu = 0.; sigma = 1; shift = 1.5;  SL = 6    # 0, 1, 1.5, 6 == default vals
     save = True
+    fs=(8.3, 3.5)  # width=8.3: minimum for legibility
+    resi=200
+    fout='img/My {:d}_sigma Normal Dist Fig_{:d}.png'.format(SL, resi)
     
     # Call plotting function: 
-    plotNSigmaNormals( mu, sigma, shift, SL, save )
+    plotNSigmaNormals( mu, sigma, shift, SL, save, fs, resi, fout )
